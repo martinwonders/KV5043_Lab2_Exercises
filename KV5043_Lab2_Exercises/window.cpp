@@ -2,7 +2,6 @@
 #include <iostream>
 #include <SDL.h>
 
-
 Window::Window(const std::string& name, int x, int y, int width, int height)
 	: 
 	m_windowName(name),
@@ -10,13 +9,19 @@ Window::Window(const std::string& name, int x, int y, int width, int height)
 	m_windowY(y),
 	m_windowWidth(width),
 	m_windowHeight(height),
-	m_isRunning(true)
+	m_isRunning(true),
+	m_windowColour(Colours::WHITE)
 {	
 	if (!Initialise())
 	{
 		m_isRunning = false;
 		std::cerr << "Error initialising SDL..." << std::endl;
 	}
+}
+
+void Window::SetColour(Colour windowColour)
+{
+	m_windowColour = windowColour;
 }
 
 void Window::Run()
@@ -40,7 +45,13 @@ void Window::Run()
 		/////////////////////////////////////
 		//Render any elements here
 		/////////////////////////////////////
-		SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+		SDL_SetRenderDrawColor(
+			m_renderer, 
+			m_windowColour.red,
+			m_windowColour.green,
+			m_windowColour.blue,
+			m_windowColour.alpha
+		);
 		SDL_RenderClear(m_renderer);
 		
 		/////////////////////////////////////
