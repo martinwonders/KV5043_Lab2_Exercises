@@ -35,7 +35,7 @@ public:
 	/// <param name="y">The y-coordinate of the window's top left position.</param>
 	/// <param name="width">The width of the window.</param>
 	/// <param name="height">The height of the window.</param>
-	Window(const std::string& name, int x, int y, int width, int height);
+	Window(std::string name, int x, int y, int width, int height);
 
 	/// <summary>
 	/// Sets the colour of the window background.

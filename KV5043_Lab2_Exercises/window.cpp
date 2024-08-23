@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SDL.h>
 
-Window::Window(const std::string& name, int x, int y, int width, int height)
+Window::Window(std::string name, int x, int y, int width, int height)
 	: 
 	m_windowName(name),
 	m_windowX(x),
