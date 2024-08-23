@@ -2,78 +2,28 @@
 #include <iostream>
 #include <SDL.h>
 
-Window::Window(const std::string& name, int x, int y, int width, int height, Uint16 frameRate)
-{
-	windowName = name;
-	windowX = x;
-	windowY = y;
-	windowWidth = width;
-	windowHeight = height;
-	isRunning = true;
-	showFrameRate = false;
+
+Window::Window(const std::string& name, int x, int y, int width, int height)
+	: 
+	m_windowName(name),
+	m_windowX(x),
+	m_windowY(y),
+	m_windowWidth(width),
+	m_windowHeight(height),
+	m_isRunning(true)
+{	
 	if (!Initialise())
 	{
-		isRunning = false;
-		std::cout << "Error initialising SDL..." << std::endl;
-	}
-	deltaTimeMillis = static_cast<Uint16>(round((1.0f / frameRate) * 1000));
-	this->frameRate = frameRate;
-}
-
-void Window::Render()
-{
-	///////////////////////////////////
-	//Render everything here
-	///////////////////////////////////
-	for (Rectangle& rect : rectanglesToRender)
-	{
-		SDL_Rect r;
-		r.x = round(rect.xPosition);
-		r.y = round(rect.yPosition);
-		r.w = round(rect.width);
-		r.h = round(rect.height);
-		SDL_SetRenderDrawColor(
-			renderer, 
-			rect.colour.red,
-			rect.colour.blue,
-			rect.colour.green,
-			rect.colour.alpha
-		);
-		SDL_RenderFillRect(renderer, &r);
+		m_isRunning = false;
+		std::cerr << "Error initialising SDL..." << std::endl;
 	}
 }
 
 void Window::Run()
 {
-	int count = 1;
-	float aveFrameRate = 0.0f;
-	while (isRunning)
+	while (m_isRunning)
 	{
-		///////////////////////////////////
-		// set the frame rate
-		///////////////////////////////////
-		while (!SDL_TICKS_PASSED(SDL_GetTicks(), tickCount + deltaTimeMillis)) {}
-		deltaTime = (SDL_GetTicks() - tickCount) / 1000.0f;
-		//This is for debugging see Game programming architecture 8.5.5
-		if (deltaTime > (1.0f / frameRate) + 0.01)
-		{
-			deltaTime = 1.0f / frameRate;
-		}
-		tickCount = SDL_GetTicks();
 		
-		if (showFrameRate)
-		{
-			 
-			aveFrameRate += (1.0f / deltaTime);
-			count++;
-			if (count >= 100)
-			{
-				std::cout << "frame rate = " << aveFrameRate/100 << std::endl;
-				std::cout << "deltaTime = " << deltaTime << std::endl;
-				showFrameRate = false;
-			}
-			
-		}
 		/////////////////////////////////////
 		//Process input here
 		/////////////////////////////////////
@@ -82,35 +32,28 @@ void Window::Run()
 		{
 			if (event.type == SDL_QUIT)
 			{
-				isRunning = false;
+				m_isRunning = false;
 			}
 
 		}
 
-		//Update Here
-		for (Rectangle& r : rectanglesToRender)
-		{
-			r.xPosition = r.xPosition + r.velocity.x * deltaTime;
-			r.yPosition = r.yPosition + r.velocity.y * deltaTime;
-		}
-
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		SDL_RenderClear(renderer);
-		Render();
-		SDL_RenderPresent(renderer);
+		/////////////////////////////////////
+		//Render any elements here
+		/////////////////////////////////////
+		SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+		SDL_RenderClear(m_renderer);
+		
+		/////////////////////////////////////
+		//Present
+		/////////////////////////////////////
+		SDL_RenderPresent(m_renderer);
 	}
-}
-
-void Window::addRectangle(Rectangle& rect)
-{
-	rectanglesToRender.push_back(rect);
 }
 
 Window::~Window()
 {
-	rectanglesToRender.clear();
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(m_renderer);
+	SDL_DestroyWindow(m_window);
 	SDL_Quit();
 }
 
@@ -120,7 +63,7 @@ bool Window::Initialise()
 	{
 		return false;
 	}
-	window = SDL_CreateWindow(windowName.c_str(), windowX, windowY, windowWidth, windowHeight, 0);
-	renderer = SDL_CreateRenderer(window, -1, 0);
+	m_window = SDL_CreateWindow(m_windowName.c_str(), m_windowX, m_windowY, m_windowWidth, m_windowHeight, 0);
+	m_renderer = SDL_CreateRenderer(m_window, -1, 0);
 	return true;
 }
