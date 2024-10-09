@@ -10,6 +10,14 @@ int main(int argc, char* argv[])
 	std::getline(std::cin, windowName);
 	std::cout << "Enter the window paremeters (x y width height): ";
 	std::cin >> x >> y >> width >> height;
+	while (std::cin.fail())
+	{
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cout << "You must enter whole numbers!" << std::endl;
+		std::cout << "Enter the window paremeters (x y width height): ";
+		std::cin >> x >> y >> width >> height;
+	}
 	Window myWindow = Window(windowName, x, y, width, height);
 	myWindow.Run();
 	return 0;
