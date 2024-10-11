@@ -3,6 +3,5 @@
 
 int main(int argc, char* argv[])
 {
-	//Testing GIT
 	return 0;
 }
